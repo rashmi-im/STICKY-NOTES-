@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sticky Notes</title>
+
+  <!-- Distinctive font pairing: Playfair Display + Lato -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ░░ BACKGROUND TEXTURE ░░ -->
+  <div class="bg-texture" aria-hidden="true"></div>
+
+  <!-- ░░ HEADER ░░ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-title-group">
+        <!-- Pin icon (SVG) -->
+        <svg class="pin-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2L8 8H4l8 14 8-14h-4L12 2z" fill="currentColor" opacity=".9"/>
+          <rect x="11" y="16" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/>
+        </svg>
+        <h1 class="header-title">Sticky Notes</h1>
+      </div>
+
+      <div class="header-right">
+        <!-- Note count badge -->
+        <span class="note-count" id="note-count" aria-live="polite">
+          <span id="count-number">0</span> notes
+        </span>
+
+        <!-- Add Note button -->
+        <button class="add-btn" id="add-btn" aria-label="Add a new note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Note
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░ MAIN — notes grid ░░ -->
+  <main class="main" id="main">
+
+    <!-- Empty state (shown when no notes exist) -->
+    <div class="empty-state" id="empty-state" aria-hidden="true">
+      <svg viewBox="0 0 80 80" fill="none" aria-hidden="true">
+        <rect x="10" y="10" width="60" height="60" rx="4" fill="#f9e784" opacity=".6"/>
+        <rect x="18" y="30" width="44" height="3" rx="1.5" fill="#c9b960" opacity=".6"/>
+        <rect x="18" y="38" width="32" height="3" rx="1.5" fill="#c9b960" opacity=".4"/>
+        <rect x="18" y="46" width="38" height="3" rx="1.5" fill="#c9b960" opacity=".3"/>
+        <rect x="30" y="16" width="20" height="6" rx="2" fill="#e8c840" opacity=".8"/>
+      </svg>
+      <p class="empty-title">No notes yet!</p>
+      <p class="empty-sub">Click <strong>Add Note</strong> to pin your first thought.</p>
+    </div>
+
+    <!-- Notes are injected here by script.js -->
+    <div class="notes-grid" id="notes-grid" role="list" aria-label="Sticky notes"></div>
+
+  </main>
+
+  <!-- ░░ NOTE CARD TEMPLATE (cloned by JS) ░░ -->
+  <template id="note-template">
+    <article class="note-card" role="listitem">
+      <!-- Top bar: colour strip + delete button -->
+      <div class="note-header">
+        <div class="note-tape" aria-hidden="true"></div>
+        <button class="note-delete" aria-label="Delete note" title="Delete note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Editable text area -->
+      <textarea
+        class="note-text"
+        placeholder="Write your note here…"
+        aria-label="Note content"
+        spellcheck="true"
+        maxlength="500"
+      ></textarea>
+
+      <!-- Footer: timestamp + char count -->
+      <div class="note-footer">
+        <time class="note-time" aria-label="Created at"></time>
+        <span class="note-chars" aria-live="polite">0 / 500</span>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>

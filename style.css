@@ -1,0 +1,400 @@
+/* ============================================================
+   style.css — Sticky Notes
+   Aesthetic: warm paper-craft — physical stickies brought to life
+   ============================================================ */
+
+
+/* ── 1. CSS VARIABLES ───────────────────────────────────────── */
+:root {
+  /* Background */
+  --bg:           #f2ede4;
+  --bg-grain:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+
+  /* Note palette — 6 warm sticky colours */
+  --note-1: #fef08a;  /* classic yellow */
+  --note-2: #86efac;  /* mint green */
+  --note-3: #fdba74;  /* peach */
+  --note-4: #a5f3fc;  /* sky */
+  --note-5: #f9a8d4;  /* blush pink */
+  --note-6: #c4b5fd;  /* lavender */
+
+  /* Tape strip (darker version of note colour, set per card) */
+  --tape-opacity: .55;
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Lato', sans-serif;
+
+  /* UI colours */
+  --header-bg:    #1c1814;
+  --header-text:  #f5f0e8;
+  --btn-bg:       #e85d3a;
+  --btn-hover:    #d04a28;
+  --btn-text:     #ffffff;
+  --delete-color: rgba(0,0,0,.30);
+  --delete-hover: #e8392a;
+
+  /* Shadows */
+  --shadow-sm:    2px 3px 8px rgba(0,0,0,.10);
+  --shadow-md:    4px 6px 20px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.08);
+  --shadow-hover: 6px 10px 28px rgba(0,0,0,.20), 0 2px 6px rgba(0,0,0,.10);
+
+  /* Radius */
+  --radius: 3px;
+}
+
+
+/* ── 2. RESET ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+
+/* ── 3. BODY & BACKGROUND ───────────────────────────────────── */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Corkboard-style subtle dot pattern + noise grain */
+.bg-texture {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(0,0,0,.055) 1px, transparent 1px),
+    var(--bg-grain);
+  background-size: 28px 28px, 300px 300px;
+}
+
+
+/* ── 4. HEADER ──────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--header-bg);
+  color: var(--header-text);
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.pin-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--btn-bg);
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.note-count {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  white-space: nowrap;
+}
+
+/* Add Note button */
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: .6rem 1.2rem;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 2px 8px rgba(232,93,58,.40);
+  white-space: nowrap;
+}
+
+.add-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.add-btn:hover {
+  background: var(--btn-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(232,93,58,.50);
+}
+
+.add-btn:active { transform: translateY(0); }
+
+
+/* ── 5. MAIN ────────────────────────────────────────────────── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+}
+
+
+/* ── 6. EMPTY STATE ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: 6rem 2rem;
+  text-align: center;
+  animation: fadeIn .5s ease both;
+}
+
+.empty-state svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: .5rem;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,.10));
+}
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #6b5e4e;
+}
+
+.empty-sub {
+  font-size: .95rem;
+  color: #9a8a78;
+  line-height: 1.6;
+}
+
+/* Hidden utility */
+.hidden { display: none !important; }
+
+
+/* ── 7. NOTES GRID ──────────────────────────────────────────── */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.75rem;
+  align-items: start;
+}
+
+
+/* ── 8. NOTE CARD ───────────────────────────────────────────── */
+.note-card {
+  background: var(--note-bg, var(--note-1));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
+
+  /* Slight random tilt — set via JS inline style */
+  transform: rotate(var(--tilt, 0deg));
+}
+
+.note-card:hover {
+  transform: rotate(0deg) translateY(-4px) scale(1.015);
+  box-shadow: var(--shadow-hover);
+  z-index: 10;
+}
+
+/* ── Creation animation ── */
+.note-card.is-entering {
+  animation: noteIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes noteIn {
+  from {
+    opacity: 0;
+    transform: rotate(var(--tilt, 0deg)) scale(.7) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--tilt, 0deg)) scale(1) translateY(0);
+  }
+}
+
+/* ── Deletion animation ── */
+.note-card.is-leaving {
+  animation: noteOut .3s cubic-bezier(.55,0,1,.45) forwards;
+}
+
+@keyframes noteOut {
+  from {
+    opacity: 1;
+    transform: rotate(var(--tilt, 0deg)) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(calc(var(--tilt, 0deg) + 8deg)) scale(.6) translateY(30px);
+  }
+}
+
+
+/* ── 9. NOTE HEADER ─────────────────────────────────────────── */
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .5rem .6rem .3rem;
+}
+
+/* Tape strip decoration */
+.note-tape {
+  width: 48px;
+  height: 10px;
+  background: rgba(255,255,255, var(--tape-opacity, .55));
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.10);
+  flex-shrink: 0;
+}
+
+/* Delete button */
+.note-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--delete-color);
+  padding: .25rem;
+  border-radius: 4px;
+  line-height: 0;
+  transition: color .2s ease, background .2s ease, transform .15s ease;
+  flex-shrink: 0;
+}
+
+.note-delete svg { width: 16px; height: 16px; }
+
+.note-delete:hover {
+  color: var(--delete-hover);
+  background: rgba(255,255,255,.55);
+  transform: scale(1.15);
+}
+
+.note-delete:active { transform: scale(.95); }
+
+
+/* ── 10. NOTE TEXTAREA ──────────────────────────────────────── */
+.note-text {
+  flex: 1;
+  width: 100%;
+  min-height: 140px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: .4rem 1rem .6rem;
+  font-family: var(--font-body);
+  font-size: .95rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: #2a2016;
+  caret-color: #1c1814;
+
+  /* Faint ruled lines */
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 1.65rem,
+    rgba(0,0,0,.07) 1.65rem,
+    rgba(0,0,0,.07) calc(1.65rem + 1px)
+  );
+  background-position: 0 1.65rem;
+}
+
+.note-text::placeholder { color: rgba(0,0,0,.35); }
+
+.note-text:focus {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 1.65rem,
+    rgba(0,0,0,.12) 1.65rem,
+    rgba(0,0,0,.12) calc(1.65rem + 1px)
+  );
+}
+
+
+/* ── 11. NOTE FOOTER ────────────────────────────────────────── */
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .35rem .85rem .65rem;
+  gap: .5rem;
+}
+
+.note-time {
+  font-size: .7rem;
+  color: rgba(0,0,0,.40);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-chars {
+  font-size: .68rem;
+  font-family: monospace;
+  color: rgba(0,0,0,.30);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Warn when close to limit */
+.note-chars.warn { color: #c0392b; font-weight: 700; }
+
+
+/* ── 12. ANIMATIONS ─────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ── 13. RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .header-inner  { padding: .8rem 1rem; }
+  .header-title  { font-size: 1.25rem; }
+  .note-count    { display: none; }
+  .main          { padding: 1.5rem 1rem 3rem; }
+  .notes-grid    { grid-template-columns: 1fr; gap: 1.25rem; }
+  .note-card     { transform: none !important; }
+  .note-card:hover { transform: none !important; }
+}
+
+@media (max-width: 400px) {
+  .add-btn span { display: none; }
+  .add-btn { padding: .6rem .8rem; }
+}
